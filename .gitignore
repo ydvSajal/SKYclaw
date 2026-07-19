@@ -34,6 +34,7 @@ main/mimi_secrets.h
 .cache
 *.pyc
 *.bin
+!docs/flash/firmware/*.bin
 
 # Documentation (generated)
 BUILD_TEST_GUIDE.md
