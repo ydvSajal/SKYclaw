@@ -158,6 +158,15 @@ static esp_err_t http_captive_redirect(httpd_req_t *req)
     return httpd_resp_send(req, NULL, 0);
 }
 
+/* DNS hijack points every hostname here; unknown paths must land on the
+ * portal instead of a 404 error page. */
+static esp_err_t http_404_redirect(httpd_req_t *req, httpd_err_code_t err)
+{
+    httpd_resp_set_status(req, "302 Found");
+    httpd_resp_set_hdr(req, "Location", "http://192.168.4.1/");
+    return httpd_resp_send(req, NULL, 0);
+}
+
 static esp_err_t http_get_scan(httpd_req_t *req)
 {
     wifi_scan_config_t scan_cfg = {
@@ -228,6 +237,9 @@ static esp_err_t http_get_config(httpd_req_t *req)
     json_add_effective_config(root, "proxy_type", MIMI_NVS_PROXY, MIMI_NVS_KEY_PROXY_TYPE, MIMI_SECRET_PROXY_TYPE);
     json_add_effective_config(root, "search_key", MIMI_NVS_SEARCH, MIMI_NVS_KEY_API_KEY, MIMI_SECRET_SEARCH_KEY);
     json_add_effective_config(root, "tavily_key", MIMI_NVS_SEARCH, MIMI_NVS_KEY_TAVILY_KEY, MIMI_SECRET_TAVILY_KEY);
+
+    /* STA IP so the page can show the address that works from the home LAN */
+    cJSON_AddStringToObject(root, "sta_ip", wifi_manager_get_ip());
 
     char *json = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
@@ -473,6 +485,8 @@ static httpd_handle_t start_http_server(bool captive)
             };
             httpd_register_uri_handler(s_server, &uri_captive);
         }
+
+        httpd_register_err_handler(s_server, HTTPD_404_NOT_FOUND, http_404_redirect);
     }
 
     s_captive_mode = captive;
@@ -512,7 +526,8 @@ esp_err_t wifi_onboard_start(wifi_onboard_mode_t mode)
     ESP_LOGI(TAG, "Connect to MimiClaw-XXXX WiFi, then open http://192.168.4.1");
 
     if (!captive) {
-        ESP_LOGI(TAG, "Local admin portal stays available while STA is connected");
+        ESP_LOGI(TAG, "Admin portal: http://%s (home LAN) or http://192.168.4.1 (hotspot)",
+                 wifi_manager_get_ip());
         return ESP_OK;
     }
 

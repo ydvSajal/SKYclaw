@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flash MimiClaw</title>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
+<style>
+:root{--bg:#0f1115;--panel:#171a21;--line:#2a2f3a;--text:#e8eaf0;--muted:#8b93a3;
+--accent:#f6a821;--accent-dim:#f6a82122}
+@media(prefers-color-scheme:light){:root{--bg:#f4f5f7;--panel:#fff;--line:#e2e4e9;
+--text:#1c2027;--muted:#6b7280;--accent:#c77d00;--accent-dim:#c77d0014}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+color:var(--text);padding:20px 16px 60px;max-width:460px;margin:0 auto;line-height:1.5}
+header{margin:8px 0 20px}
+h1{font-size:1.3em;font-weight:700;letter-spacing:-.01em}
+h1 b{color:var(--accent)}
+p.sub{color:var(--muted);font-size:.9em;margin-top:6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 16px;margin:14px 0}
+.step{display:flex;gap:12px;margin:14px 0}
+.step-num{flex:0 0 24px;height:24px;border-radius:50%;background:var(--accent-dim);color:var(--accent);
+font-size:.8em;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step-body{font-size:.92em}
+.step-body b{color:var(--text)}
+esp-web-install-button{display:block;margin:8px 0}
+button{width:100%;padding:14px;border:none;border-radius:8px;background:var(--accent);color:#14161b;
+font-size:1em;font-weight:700;cursor:pointer}
+button:active{opacity:.8}
+.note{font-size:.82em;color:var(--muted);text-align:center;margin-top:10px}
+.warn{background:var(--accent-dim);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+font-size:.82em;color:var(--muted);margin-top:14px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+<h1><b>Mimi</b>Claw Flasher</h1>
+<p class="sub">Flash your ESP32-S3 device straight from this page. Chrome or Edge on desktop, USB cable, no software install.</p>
+</header>
+
+<div class="card">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body">Plug device into computer via <b>USB</b>.</div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body">Click <b>Connect &amp; Flash</b> below, then pick the device's serial port when the browser prompts.</div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body">Wait for flashing to finish. Device reboots automatically.</div>
+</div>
+<div class="step">
+<div class="step-num">4</div>
+<div class="step-body">On your phone, join the <b>MimiClaw-XXXX</b> WiFi hotspot it creates, then open
+<a href="http://192.168.4.1">192.168.4.1</a> to enter WiFi + API key.</div>
+</div>
+
+<esp-web-install-button manifest="manifest.json">
+  <button slot="activate">Connect &amp; Flash</button>
+  <span slot="unsupported">
+    <div class="warn">Your browser doesn't support Web Serial. Open this page in desktop Chrome or Edge.</div>
+  </span>
+  <span slot="not-allowed">
+    <div class="warn">Web Serial needs HTTPS. You're seeing this over an insecure connection.</div>
+  </span>
+</esp-web-install-button>
+
+<p class="note">This erases the device and writes the latest MimiClaw release.</p>
+</div>
+
+<div class="warn">
+Prefer the command line? See the
+<a href="https://github.com/ydvSajal/SKYclaw/releases/latest">latest release</a> for
+<code>esptool.py</code> instructions.
+</div>
+
+</body>
+</html>
