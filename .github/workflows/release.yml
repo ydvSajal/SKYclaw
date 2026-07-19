@@ -131,4 +131,9 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "chore: publish ${GITHUB_REF_NAME} firmware to web flasher"
             git push origin HEAD:main
+            # Pushes made with the default GITHUB_TOKEN don't trigger other
+            # workflows, so the Pages deploy needs an explicit kick here.
+            gh workflow run pages.yml --ref main
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}
